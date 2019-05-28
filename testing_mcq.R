@@ -1,10 +1,13 @@
 ## MCQ test cases
-source("mcq_calc.R")
+
 # provided by https://link.springer.com/article/10.1007/s40614-016-0070-9
 
 # these vectors are in the original item order (they are sorted in the above ms)
 steep = c(0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1)
 shallow = c(0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1)
+
+# source the fn
+source("mcq_calc.R")
 
 mcq_calc(steep, Output = "SML")
 mcq_calc(steep)
@@ -19,7 +22,8 @@ mcq_calc(shallow)
 # large       0.06495	  0.00025
 # geo_mean    0.04729	  0.00063
 
-mcq = read.csv("mcq_testdata.csv") # check against Kaplan et al excel file
+# read 20 examples of MCQ responses
+mcq = read.csv("mcq_testdata.csv") # check outputs against Kaplan et al excel file
 
 mcq_calc(mcq$X1, Output = "SML")
 mcq_calc(mcq$X1, Output = "Consistency")
