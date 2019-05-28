@@ -2,26 +2,22 @@
 
 # Calculates k value for the Monetary Choice Questionnaire
 # https://link.springer.com/article/10.1007/s40614-016-0070-9
-# An estimate of the respondent’s discounting rate can be calculated as 
-# the geometric mean (to avoid underweighting) of the k at indifference 
-# between the two questions that reflect when the respondent changes between 
-# choosing the delayed reward versus the immediate reward. In cases where 
-# the respondent’s change between preferring the delayed versus the immediate 
-# reward is not consistent, the two questions that are most proportional to 
-# their responses are chosen. If the participant always chooses the immediate 
-# reward or the delayed reward, the estimation of k is equal to one of the 
-# endpoints (0.25 or 0.00016).
 
-# data 
+# data required
 # a vector containing 
-# 0s (i.e., selection of the SIR)
-# 1s (i.e., selection of the LDR) 
+# 0s (i.e., selection of the SIR) smaller-immediate reward
+# 1s (i.e., selection of the LDR) larger delayed reward
 # in the original MCQ item order
 
 mcq_calc = function(data, Output = "Geomean_k"){
-
-# First, the 27 items are ordered based on their associated k values, starting with 
-# the smallest k values (Table 1). 
+  
+  # required function
+  # geometric mean (https://stackoverflow.com/questions/2602583/geometric-mean-is-there-a-built-in)
+  gm_mean = function(x, na.rm=TRUE){
+    exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
+  }
+  
+  ## Step 1 -  Use Table 1 from Kaplan et al to connect items, magnitudes and k values and to sort. 
 
   item = c(13,  1,  9, 20,  6, 17, 26, 24, 12, 22, 16, 15,  3, 10,  2, 18, 21, 25,  5, 14, 
            23,  7,  8, 19, 11, 27,  4)
@@ -33,15 +29,20 @@ mcq_calc = function(data, Output = "Geomean_k"){
   
   mcq.vars = data.frame(item, magnitude, k_val)
   
-  # geo mean function (https://stackoverflow.com/questions/2602583/geometric-mean-is-there-a-built-in)
-  gm_mean = function(x, na.rm=TRUE){
-    exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
-  }
+  # sort the data from the mcq responses
+  sorted = data[mcq.vars$item] 
   
-  ## Consistency
-  # For each item, the degree to which the respondents’ selections are consistent 
-  # with response patterns preceding, as well as following, the switch(es) from SIR 
-  # choices to LDR choices is calculated. 
+  # create a matrix to hold the sorted responses at the three magnitudes
+  sorted.mat = cbind(sorted[magnitude=="Small"], 
+                     sorted[magnitude=="Medium"], 
+                     sorted[magnitude=="Large"])
+  
+  # create a matrix to hold the k values for each of these responses
+  k.mat = cbind(mcq.vars$k_val[mcq.vars$magnitude=="Small"],
+                mcq.vars$k_val[mcq.vars$magnitude=="Medium"],
+                mcq.vars$k_val[mcq.vars$magnitude=="Large"])
+  
+  ## Step 2 - Calculate Consistency
   
   # A consistency score is determined by counting 
   # the instances of 0s (i.e., selection of the SIR) prior to the given k value and 
@@ -50,14 +51,7 @@ mcq_calc = function(data, Output = "Geomean_k"){
   # 9 in the case of each of the three magnitudes). The larger the number, the more consistent
   # the response pattern.
   
-  # sort the data from the mcq responses
-  sorted = data[mcq.vars$item] 
-  # 
-  sorted.mat = cbind(sorted[magnitude=="Small"], 
-                     sorted[magnitude=="Medium"], 
-                     sorted[magnitude=="Large"])
-  
-  # calculate consistency
+  # set up empty vector
   consistency = matrix(0, nrow = 9, ncol = 3)
   
   for(mag.ix in 1:3){
@@ -66,13 +60,10 @@ mcq_calc = function(data, Output = "Geomean_k"){
     #consistency[9, mag.ix] = sum(sorted.mat[item.ix:9,mag.ix]==1))/9
   }# mag
   
-  # identify most consistent k vals
-  k.mat = cbind(mcq.vars$k_val[mcq.vars$magnitude=="Small"],
-                mcq.vars$k_val[mcq.vars$magnitude=="Medium"],
-                mcq.vars$k_val[mcq.vars$magnitude=="Large"])
-  
+  ## Step 3 - identify most consistent k vals
+ 
+  # set up empty vector to hold the k value for each magnitude
   k.vals.mag = rep(0,3)
-  
   
   for(mag.ix in 1:3){
     # If the participant always chooses the immediate 
@@ -100,30 +91,13 @@ mcq_calc = function(data, Output = "Geomean_k"){
     
     }# mag.ix
   
+  # Step 4 - Return Outputs
+  # return geomean_k
   if(Output == "Geomean_k") return(gm_mean(k.vals.mag))
+  # return k for each magnitude
   if(Output == "SML") return(k.vals.mag)
-
+  # return max consistency for each magnitude (for checking)
+  if(Output == "Consistency") return( c(max(consistency[,1]), max(consistency[,2]), max(consistency[,3]) ) )
 }
 
-
-## test cases
-
-# provided by https://link.springer.com/article/10.1007/s40614-016-0070-9
-
-# these vectors are in the original item order (they are sorted in the above ms)
-# steep = c(0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1)
-# shallow = c(0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1)
-# 
-# mcq_calc(steep, Output = "SML")
-# mcq_calc(steep)
-# mcq_calc(shallow, Output = "SML")
-# mcq_calc(shallow)
-
-# values from Kaplan et al Excel file (https://kuscholarworks.ku.edu/handle/1808/15424)
-#               steep   shallow
-# Ov k        0.06521	  0.00040
-# small       0.02557	  0.00063
-# med         0.06369	  0.00159
-# large       0.06495	  0.00025
-# geo_mean    0.04729	  0.00063
 
