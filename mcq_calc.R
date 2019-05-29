@@ -17,7 +17,8 @@ mcq_calc = function(data, Output = "Geomean_k"){
     exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
   }
   
-  ## Step 1 -  Use Table 1 from Kaplan et al to connect items, magnitudes and k values and to sort. 
+  ## Step 1 -  Use Table 1 from Kaplan et al to generate 3 aligned vectors
+  # these connect items, magnitudes and k values and allow us to sort the MCQ responses. 
 
   item = c(13,  1,  9, 20,  6, 17, 26, 24, 12, 22, 16, 15,  3, 10,  2, 18, 21, 25,  5, 14, 
            23,  7,  8, 19, 11, 27,  4)
@@ -27,10 +28,12 @@ mcq_calc = function(data, Output = "Geomean_k"){
             0.005961252, 0.015804598, 0.015686275, 0.016049383, 0.041353383, 0.040564374, 0.041463415,
             0.102564103, 0.100000000, 0.101731602, 0.246753247, 0.250000000, 0.248847926)
   
-  mcq.vars = data.frame(item, magnitude, k_val)
+  # mcq.vars = data.frame(item, magnitude, k_val)
+  
+  ## Step 2 -  Sort MCQ data and set up three magnitude-based vectors in matrix
   
   # sort the data from the mcq responses
-  sorted = data[mcq.vars$item] 
+  sorted = data[item] # now the responses are ordered by k value and aligned with the mag and k_val vectors
   
   # create a matrix to hold the sorted responses at the three magnitudes
   sorted.mat = cbind(sorted[magnitude=="Small"], 
@@ -38,11 +41,11 @@ mcq_calc = function(data, Output = "Geomean_k"){
                      sorted[magnitude=="Large"])
   
   # create a matrix to hold the k values for each of these responses
-  k.mat = cbind(mcq.vars$k_val[mcq.vars$magnitude=="Small"],
-                mcq.vars$k_val[mcq.vars$magnitude=="Medium"],
-                mcq.vars$k_val[mcq.vars$magnitude=="Large"])
+  k.mat = cbind(k_val[magnitude=="Small"],
+                k_val[magnitude=="Medium"],
+                k_val[magnitude=="Large"])
   
-  ## Step 2 - Calculate Consistency
+  ## Step 3 - Calculate Consistency
   
   # A consistency score is determined by counting 
   # the instances of 0s (i.e., selection of the SIR) prior to the given k value and 
@@ -60,7 +63,7 @@ mcq_calc = function(data, Output = "Geomean_k"){
     #consistency[9, mag.ix] = sum(sorted.mat[item.ix:9,mag.ix]==1))/9
   }# mag
   
-  ## Step 3 - identify most consistent k vals
+  ## Step 4 - identify most consistent k vals
  
   # set up empty vector to hold the k value for each magnitude
   k.vals.mag = rep(0,3)
@@ -91,7 +94,7 @@ mcq_calc = function(data, Output = "Geomean_k"){
     
     }# mag.ix
   
-  # Step 4 - Return Outputs
+  # Step 5 - Return Outputs
   # return geomean_k
   if(Output == "Geomean_k") return(gm_mean(k.vals.mag))
   # return k for each magnitude
