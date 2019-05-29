@@ -1,10 +1,10 @@
 # What does this function do?
 
-# Calculates k value for the Monetary Choice Questionnaire
+# Calculates k value for the 27-item Monetary Choice Questionnaire
 # https://link.springer.com/article/10.1007/s40614-016-0070-9
 
 # data required
-# a vector containing 
+# a vector containing 27 items
 # 0s (i.e., selection of the SIR) smaller-immediate reward
 # 1s (i.e., selection of the LDR) larger delayed reward
 # in the original MCQ item order
