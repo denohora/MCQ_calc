@@ -16,8 +16,8 @@ endpoints (0.25 or 0.00016)."
 
 mcq_calc is the function and I've provided some examples for testing. The 
 default Output of mcq_calc is the geometric mean of the 3 k values, one from
-magnitude level. Two other Outputs are available. You can ask for "SML" which 
-will give return the small, medium and large k values. You can also ask for 
-"Consistency" to return the maximum consistency in each of the magnitudes. 
+each magnitude level. Two other Outputs are available. You can ask for "SML" which 
+will give return the k values for small, medium and large magnitude values. You can 
+also ask for "Consistency" to return the maximum consistency in each of the magnitudes. 
 Consistency above .75 is preferred (see Kaplan et al).
 
