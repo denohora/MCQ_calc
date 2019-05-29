@@ -1,5 +1,5 @@
 # MCQ_calc
-# Calculates k value for the Monetary Choice Questionnaire
+# Calculates k value for the 27-item Monetary Choice Questionnaire
 Based on 
 Kaplan, B.A., Amlung, M., Reed, D.D. et al. BEHAV ANALYST (2016) 39: 293. 
 https://doi.org/10.1007/s40614-016-0070-9
