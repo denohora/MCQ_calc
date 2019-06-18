@@ -21,7 +21,7 @@ mcq_calc <- function(data, Output = "Geomean_k"){
   # these connect items, magnitudes and k values and allow us to sort the 
   # MCQ responses. 
 
-  item <- c(13,  1,  9, 20,  6, 17, 26, 24, 12, 22, 16, 15,  3, 10,  2, 18, 21, 
+  item_list <- c(13,  1,  9, 20,  6, 17, 26, 24, 12, 22, 16, 15,  3, 10,  2, 18, 21, 
            25,  5, 14, 23,  7,  8, 19, 11, 27,  4)
   magnitude <- rep(c("Small",  "Medium", "Large"), 9) 
   k_val <- c(0.000158128, 0.000158278, 0.000158278, 0.000399042, 0.000398936, 
@@ -36,19 +36,19 @@ mcq_calc <- function(data, Output = "Geomean_k"){
   ## Step 2 -  Sort MCQ data and set up three magnitude-based vectors in matrix
   
   # sort the data from the mcq responses
-  sorted <- data[item] 
+  sorted <- data[item_list] 
   # now the responses are ordered by k value 
   # and aligned with the mag and k_val vectors
   
   # create a matrix to hold the sorted responses at the three magnitudes
   sorted_mat <- cbind(sorted[magnitude=="Small"], 
-                     sorted[magnitude=="Medium"], 
-                     sorted[magnitude=="Large"])
+                      sorted[magnitude=="Medium"], 
+                      sorted[magnitude=="Large"])
   
   # create a matrix to hold the k values for each of these responses
   k_mat <- cbind(k_val[magnitude=="Small"],
-                k_val[magnitude=="Medium"],
-                k_val[magnitude=="Large"])
+                 k_val[magnitude=="Medium"],
+                 k_val[magnitude=="Large"])
   
   ## Step 3 - Calculate Consistency
   
@@ -66,7 +66,7 @@ mcq_calc <- function(data, Output = "Geomean_k"){
   for (i in 1:3) {
     consistency[1, i] <- sum(sorted_mat[1:9,i]==1)/9
     for (item in 2:9) consistency[item, i] <- (sum(sorted_mat[1:(item-1),i]==0) + 
-                                              sum(sorted_mat[item:9,i]==1))/9
+                                               sum(sorted_mat[item:9,i]==1))/9
     #consistency[9, i] = sum(sorted_mat[item:9,i]==1))/9
   }# mag
   
