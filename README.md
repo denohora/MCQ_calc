@@ -21,3 +21,6 @@ will give return the k values for small, medium and large magnitude values. You 
 also ask for "Consistency" to return the maximum consistency in each of the magnitudes. 
 Consistency above .75 is preferred (see Kaplan et al).
 
+To check the outputs of this function, use the 27-item Excel-Based scorer 
+by Kaplan et al:
+https://kuscholarworks.ku.edu/handle/1808/15424
